@@ -1,0 +1,53 @@
+params:
+  - id: he_pg_pass_x8kd
+    type: secret
+    name: "数据库密码"
+    description: "PostgreSQL 数据库密码（已预置随机值，应用自动使用）"
+    default_value: "hE9vTq2mXw7nRz4p"
+    optional: false
+  - id: he_redis_pass_x8kd
+    type: secret
+    name: "缓存密码"
+    description: "Redis 缓存密码（已预置随机值，应用自动使用）"
+    default_value: "uQ3cWb8sYf1kMv6n"
+    optional: false
+  - id: he_jwt_secret_x8kd
+    type: secret
+    name: "JWT 密钥"
+    description: "登录令牌签名密钥（已预置随机值）"
+    default_value: "Jt5xPn0vCe8hLk2rWq7mZb3sVy4gDd9u"
+    optional: false
+  - id: he_app_key_x8kd
+    type: secret
+    name: "APP_KEY"
+    description: "Laravel 应用加密密钥（已预置随机值，应用自动使用）"
+    default_value: "fYu8kp+MT/76pL93GyYRjNbYcp3E+GwMeydDjZJA258="
+    optional: false
+
+locales:
+  zh:
+    he_pg_pass_x8kd:
+      name: "数据库密码"
+      description: "PostgreSQL 数据库密码（已预置随机值，应用自动使用）"
+    he_redis_pass_x8kd:
+      name: "缓存密码"
+      description: "Redis 缓存密码（已预置随机值，应用自动使用）"
+    he_jwt_secret_x8kd:
+      name: "JWT 密钥"
+      description: "登录令牌签名密钥（已预置随机值）"
+    he_app_key_x8kd:
+      name: "APP_KEY"
+      description: "Laravel 应用加密密钥（已预置随机值）"
+  en:
+    he_pg_pass_x8kd:
+      name: "Database password"
+      description: "Auto-generated random value, used by the app automatically."
+    he_redis_pass_x8kd:
+      name: "Redis password"
+      description: "Auto-generated random value, used by the app automatically."
+    he_jwt_secret_x8kd:
+      name: "JWT secret"
+      description: "Auto-generated random value for token signing."
+    he_app_key_x8kd:
+      name: "APP_KEY"
+      description: "Auto-generated Laravel APP_KEY."

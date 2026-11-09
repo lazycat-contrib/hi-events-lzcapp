@@ -1,0 +1,18 @@
+package: community.lazycat.app.hi-events
+name: Hi.Events
+version: 2.2.0
+description: "Open-source event management and ticket-selling platform."
+min_os_version: "1.5.0"
+homepage: https://hi.events
+author: HiEventsDev
+license: "AGPL-3.0"
+permissions:
+  required:
+    - net.internet
+locales:
+  zh:
+    name: Hi.Events 活动票务
+    description: "开源活动管理与售票平台，支持票种、折扣码、现场签到与数据看板。"
+  en:
+    name: Hi.Events
+    description: "Open-source event management and ticket-selling platform."

@@ -1,0 +1,57 @@
+version: 1
+project:
+  root: .
+  build_config: lzc-build.yml
+  package_file: package.yml
+  output: dist/application.lpk
+  target_arch: amd64
+update:
+  strategy: publish
+  allow_downgrade: false
+  version_source:
+    type: image
+    image: hi-events
+build:
+  toolchains: []
+  run_buildscript: false
+images:
+  - id: hi-events
+    target: service
+    service: hi-events
+    source: daveearley/hi.events-all-in-one
+    channel: custom
+    sort: semver
+    tag_regex: ^v(?P<version>[0-9]+[.][0-9]+[.][0-9]+)$
+    version_regex: ^v(?P<version>[0-9]+[.][0-9]+[.][0-9]+)$
+    version_template: "{version}"
+    delivery:
+      mode: mirror
+      require_digest_match: true
+  - id: postgres
+    target: service
+    service: postgres
+    source: library/postgres
+    channel: custom
+    sort: semver
+    # postgres publishes two-part tags (17.11); pad to three (koillection precedent)
+    tag_regex: "^17[.][0-9]+$"
+    version_regex: "^(?P<version>17[.][0-9]+)$"
+    version_template: "{version}.0"
+    delivery:
+      mode: mirror
+      require_digest_match: true
+  - id: redis
+    target: service
+    service: redis
+    source: library/redis
+    channel: custom
+    sort: semver
+    tag_regex: ^7[.][0-9]+[.][0-9]+$
+    version_regex: ^(?P<version>7[.][0-9]+[.][0-9]+)$
+    version_template: "{version}"
+    delivery:
+      mode: mirror
+      require_digest_match: true
+release:
+  use_github_release_notes: true
+  store_changelog_format: plain

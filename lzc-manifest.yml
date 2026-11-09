@@ -1,0 +1,85 @@
+application:
+  subdomain: hi-events
+  multi_instance: false
+  # Registration is a local email+password form (no email verification step,
+  # CreateAccountAction signs the user in immediately) -> public_path.
+  public_path:
+    - /
+  upstreams:
+    - location: /package-licenses/
+      backend: file:///lzcapp/pkg/content/licenses/
+    - location: /
+      backend: http://hi-events:80/
+services:
+  hi-events:
+    # upstream: daveearley/hi.events-all-in-one:v2.2.0
+    image: docker.1ms.run/daveearley/hi.events-all-in-one:v2.2.0
+    environment:
+      - APP_KEY={{ .U.he_app_key_x8kd }}
+      - JWT_SECRET={{ .U.he_jwt_secret_x8kd }}
+      - APP_FRONTEND_URL=https://{{.S.AppDomain}}
+      - APP_CDN_URL=https://{{.S.AppDomain}}/storage
+      - VITE_API_URL_CLIENT=https://{{.S.AppDomain}}/api
+      - VITE_API_URL_SERVER=http://localhost/api
+      - VITE_APP_NAME=Hi.Events
+      - LOG_CHANNEL=stderr
+      - QUEUE_CONNECTION=redis
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD={{ .U.he_redis_pass_x8kd }}
+      - FILESYSTEM_PUBLIC_DISK=public
+      - FILESYSTEM_PRIVATE_DISK=local
+      - DATABASE_URL=postgresql://postgres:{{ .U.he_pg_pass_x8kd }}@postgres:5432/hi-events
+      - POSTGRES_DB=hi-events
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD={{ .U.he_pg_pass_x8kd }}
+      - PGHOST=postgres
+      - PGPORT=5432
+      - PGDATABASE=hi-events
+      - PGUSER=postgres
+      - PGPASSWORD={{ .U.he_pg_pass_x8kd }}
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=redis
+      - APP_PORT=80
+      - TZ=Asia/Shanghai
+    depends_on:
+      - postgres
+      - redis
+    binds:
+      - /lzcapp/var/mutdata/storage:/app/storage
+  postgres:
+    # upstream: library/postgres:17-alpine
+    image: docker.1ms.run/library/postgres:17.11
+    environment:
+      - POSTGRES_DB=hi-events
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD={{ .U.he_pg_pass_x8kd }}
+      - TZ=Asia/Shanghai
+    binds:
+      - /lzcapp/var/mutdata/pgdata:/var/lib/postgresql/data
+  redis:
+    # upstream: library/redis:7-alpine
+    image: docker.1ms.run/library/redis:7.4.5
+    command: redis-server --requirepass {{ .U.he_redis_pass_x8kd }}
+    environment:
+      - TZ=Asia/Shanghai
+    binds:
+      - /lzcapp/var/mutdata/redis:/data
+usage: |
+  Hi.Events 是开源活动管理与售票平台（AGPL-3.0），支持票种、折扣码、
+  现场签到、数据看板等，适合会议、演出、社群活动的报名与售票。
+
+  使用方法：
+  1. 部署后打开应用，在注册页用邮箱+密码自助创建第一个管理员账号
+     （本地注册，无邮件验证步骤），注册即登录。
+  2. 创建 Event 后即可配置票种、折扣码与活动页面，通过活动链接对外售票。
+  3. 支付（Stripe 等）与邮件通知需在系统设置里自行填入凭据；未配置时
+     邮件走本地 log 通道，不会外发。
+
+  说明：
+  - 注册为应用自身的邮箱+密码表单（无邮件验证），因此开放 public_path，
+    由应用自身登录页鉴权；数据库/Redis/JWT/APP_KEY 均为部署系统预置随机值。
+  - 镜像为官方 all-in-one 形态（前端+后端+nginx 同容器），数据持久化在
+    /lzcapp/var/mutdata。
+  - 本包未做实机验证，功能以官方文档为准：https://hi.events/docs
+  - 许可证 AGPL-3.0（含 ee/ 目录企业许可，允许随 Hi.Events 整体分发），
+    随包分发，见 /package-licenses/。
